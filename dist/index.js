@@ -7,13 +7,20 @@ const express_1 = __importDefault(require("express"));
 const db_1 = require("./db");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
-app.post("/api/v1/signup", (req, res) => {
+app.post("/api/v1/signup", async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
-    db_1.UserModel.create({
-        username: username,
-        password: password
-    });
+    try {
+        await db_1.UserModel.create({
+            username: username,
+            password: password
+        });
+    }
+    catch (e) {
+        res.status(411).json({
+            message: "User already exists"
+        });
+    }
     res.json({
         message: "User signed up"
     });
