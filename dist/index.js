@@ -68,12 +68,21 @@ app.get("/api/v1/content", middleware_1.userMiddleware, async (req, res) => {
     const userId = req.userId;
     const content = await db_1.ContentModel.find({
         userId: userId
-    });
+    }).populate("userId", "username");
     res.json({
         content
     });
 });
-app.delete("/api/v1/content", (req, res) => {
+app.delete("/api/v1/content", middleware_1.userMiddleware, async (req, res) => {
+    const contentId = req.body.contentId;
+    await db_1.ContentModel.deleteMany({
+        contentId,
+        //@ts-ignore
+        userId: req.userId
+    });
+    res.json({
+        message: "Deleted"
+    });
 });
 app.post("/api/v1/brain/share", (req, res) => {
 });
