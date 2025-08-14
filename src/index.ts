@@ -1,5 +1,5 @@
 import express from "express";
-import { ContentModel, UserModel } from "./db";
+import { ContentModel, LinkModel, UserModel } from "./db";
 import jwt from "jsonwebtoken";
 import { JWT_PASSWORD } from "./config";
 import { userMiddleware } from "./middleware";
@@ -98,7 +98,15 @@ app.delete("/api/v1/content",userMiddleware, async (req, res) => {
     })
 })
 
-app.post("/api/v1/brain/share", (req, res) => {
+app.post("/api/v1/brain/share", userMiddleware, (req, res) => {
+    const share = req.body.share;
+    if(share){
+        LinkModel.create({
+            userId: req.UserId,
+            
+
+        })
+    }
 
 })
 
