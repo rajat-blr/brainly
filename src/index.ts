@@ -3,6 +3,7 @@ import { ContentModel, LinkModel, UserModel } from "./db";
 import jwt from "jsonwebtoken";
 import { JWT_PASSWORD } from "./config";
 import { userMiddleware } from "./middleware";
+import { random } from "./utils";
 
 
 
@@ -98,16 +99,24 @@ app.delete("/api/v1/content",userMiddleware, async (req, res) => {
     })
 })
 
-app.post("/api/v1/brain/share", userMiddleware, (req, res) => {
+app.post("/api/v1/brain/share", userMiddleware, async(req, res) => {
     const share = req.body.share;
     if(share){
-        LinkModel.create({
-            userId: req.UserId,
-            
+        await LinkModel.create({
+            //@ts-ignore
+            userId: req.userId,
+            hash : random(10)
 
         })
+    } else {
+       await LinkModel.deleteOne({
+            //@ts-ignore
+            userId: req.userId
+        })
     }
-
+    res.json({
+        message: "Updated shareable Link"
+    })
 })
 
 app.get("/api/v1/brain/:shareLink", (req, res) => {

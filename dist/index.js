@@ -8,6 +8,7 @@ const db_1 = require("./db");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = require("./config");
 const middleware_1 = require("./middleware");
+const utils_1 = require("./utils");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.post("/api/v1/signup", async (req, res) => {
@@ -84,7 +85,24 @@ app.delete("/api/v1/content", middleware_1.userMiddleware, async (req, res) => {
         message: "Deleted"
     });
 });
-app.post("/api/v1/brain/share", (req, res) => {
+app.post("/api/v1/brain/share", middleware_1.userMiddleware, async (req, res) => {
+    const share = req.body.share;
+    if (share) {
+        await db_1.LinkModel.create({
+            //@ts-ignore
+            userId: req.userId,
+            hash: (0, utils_1.random)(10)
+        });
+    }
+    else {
+        await db_1.LinkModel.deleteOne({
+            //@ts-ignore
+            userId: req.userId
+        });
+    }
+    res.json({
+        message: "Updated shareable Link"
+    });
 });
 app.get("/api/v1/brain/:shareLink", (req, res) => {
 });
