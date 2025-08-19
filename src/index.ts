@@ -102,12 +102,26 @@ app.delete("/api/v1/content",userMiddleware, async (req, res) => {
 app.post("/api/v1/brain/share", userMiddleware, async(req, res) => {
     const share = req.body.share;
     if(share){
+        const existingLink = await LinkModel.findOne({
+            //@ts-ignore
+            userId: req.userId
+        });
+        if(existingLink){
+            res.json({
+                hash: existingLink.hash
+            })
+            return;
+        }
+        const hash = random(10);
         await LinkModel.create({
             //@ts-ignore
             userId: req.userId,
-            hash : random(10)
+            hash: hash
 
         })
+        res.json({
+            message: "/share/" + hash
+        }) 
     } else {
        await LinkModel.deleteOne({
             //@ts-ignore
@@ -115,7 +129,7 @@ app.post("/api/v1/brain/share", userMiddleware, async(req, res) => {
         })
     }
     res.json({
-        message: "Updated shareable Link"
+        message: "Removed link"
     })
 })
 
