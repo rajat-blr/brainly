@@ -152,7 +152,7 @@ app.get("/api/v1/brain/:shareLink", async(req, res) => {
      })
 
      const user = await UserModel.findOne({
-        userId: link.userId
+        _id: link.userId
      })
 
      res.json({
